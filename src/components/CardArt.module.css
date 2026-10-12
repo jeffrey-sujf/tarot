@@ -1,0 +1,56 @@
+.frame {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.placeholder {
+  position: absolute;
+  inset: 0;
+  background: var(--paper-raised);
+  animation: breathe 1.6s ease-in-out infinite;
+}
+
+.placeholder::after {
+  content: "";
+  position: absolute;
+  inset: 28%;
+  border: 1px solid var(--line);
+}
+
+.art {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  opacity: 0;
+  transition: opacity 320ms var(--ease-standard);
+}
+
+.loaded {
+  opacity: 1;
+}
+
+@keyframes breathe {
+  0%, 100% { opacity: 0.55; }
+  50% { opacity: 0.95; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .art {
+    transition: none;
+  }
+  .placeholder {
+    animation: none;
+    opacity: 0.75;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .art {
+    filter: invert(1);
+  }
+}

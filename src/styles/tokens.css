@@ -1,0 +1,37 @@
+:root {
+  --paper: #f7f5f0;
+  --paper-raised: #fcfbf8;
+  --ink: #1b1a17;
+  --ink-soft: #3a3733;
+  --ink-faint: #817a70;
+  --line: rgba(27, 26, 23, 0.14);
+  --line-strong: rgba(27, 26, 23, 0.28);
+  --accent: #1b1a17;
+  --shadow-soft: 0 1px 2px rgba(27, 26, 23, 0.04), 0 8px 24px rgba(27, 26, 23, 0.06);
+  --shadow-card: 0 2px 6px rgba(27, 26, 23, 0.08), 0 16px 40px rgba(27, 26, 23, 0.1);
+
+  --font-display: "Fraunces", "Iowan Old Style", Georgia, serif;
+  --font-ui: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+  --ease-standard: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #15140f;
+    --paper-raised: #1b1a15;
+    --ink: #f3f1ea;
+    --ink-soft: #d9d5cb;
+    --ink-faint: #8f897c;
+    --line: rgba(243, 241, 234, 0.14);
+    --line-strong: rgba(243, 241, 234, 0.26);
+    --accent: #f3f1ea;
+    --shadow-soft: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.35);
+    --shadow-card: 0 2px 6px rgba(0, 0, 0, 0.4), 0 16px 40px rgba(0, 0, 0, 0.45);
+  }
+}

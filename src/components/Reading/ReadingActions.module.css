@@ -1,0 +1,82 @@
+.wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  margin-top: 48px;
+}
+
+.seedRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.seedLabel {
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.seed {
+  font-family: "SF Mono", Consolas, monospace;
+  font-size: 14px;
+  letter-spacing: 0.02em;
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 6px 12px;
+  color: var(--ink-soft);
+}
+
+.actions {
+  display: flex;
+  gap: 12px;
+}
+
+.actionButton {
+  border: 1px solid var(--line-strong);
+  background: transparent;
+  border-radius: 999px;
+  padding: 10px 20px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 200ms var(--ease-standard), transform 200ms var(--ease-standard), color 200ms var(--ease-standard);
+}
+
+.actionButton:hover {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.actionButton:active {
+  transform: scale(0.97);
+}
+
+.actionButton:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.actionButton:disabled:hover {
+  background: transparent;
+  color: var(--ink);
+}
+
+.toastSlot {
+  min-height: 20px;
+}
+
+.toast {
+  font-size: 13px;
+  color: var(--ink-faint);
+  animation: fadeInUp 240ms var(--ease-standard);
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
