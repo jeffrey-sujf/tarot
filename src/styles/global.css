@@ -37,6 +37,13 @@ button {
   color: inherit;
 }
 
+button,
+a,
+[role="button"] {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
 #root {
   min-height: 100vh;
 }

@@ -15,22 +15,36 @@ function loadCardImage(card: TarotCard): Promise<HTMLImageElement> {
   });
 }
 
-const PAPER = "#f7f5f0";
-const INK = "#1b1a17";
-const FAINT = "#817a70";
-const LINE = "rgba(27, 26, 23, 0.16)";
+const PALETTE = {
+  light: { paper: "#f7f5f0", ink: "#1b1a17", faint: "#817a70", line: "rgba(27, 26, 23, 0.16)" },
+  dark: { paper: "#15140f", ink: "#f3f1ea", faint: "#8f897c", line: "rgba(243, 241, 234, 0.2)" },
+};
+
+function isDarkMode(): boolean {
+  return typeof window !== "undefined" && window.matchMedia?.("(prefers-color-scheme: dark)").matches === true;
+}
+
+/** Mirrors the on-screen layout: cards stack in a single column on narrow viewports. */
+function isMobileViewport(): boolean {
+  return typeof window !== "undefined" && window.innerWidth <= 560;
+}
 
 export async function renderReadingImage(cards: ExportCard[], seed: string, createdAt: string): Promise<Blob> {
-  const cardW = 300;
-  const cardH = 450;
-  const gap = 48;
-  const marginX = 80;
+  const { paper: PAPER, ink: INK, faint: FAINT, line: LINE } = isDarkMode() ? PALETTE.dark : PALETTE.light;
+  const stacked = isMobileViewport();
+
+  const cardW = stacked ? 280 : 300;
+  const cardH = stacked ? 420 : 450;
+  const gap = stacked ? 56 : 48;
+  const marginX = stacked ? 48 : 80;
   const topMargin = 110;
   const labelHeight = 70;
   const bottomMargin = 90;
 
-  const width = cards.length * cardW + (cards.length - 1) * gap + marginX * 2;
-  const height = topMargin + cardH + labelHeight + bottomMargin;
+  const width = stacked ? cardW + marginX * 2 : cards.length * cardW + (cards.length - 1) * gap + marginX * 2;
+  const height = stacked
+    ? topMargin + cards.length * (cardH + labelHeight) + (cards.length - 1) * gap + bottomMargin
+    : topMargin + cardH + labelHeight + bottomMargin;
 
   const canvas = document.createElement("canvas");
   const scale = 2;
@@ -57,8 +71,8 @@ export async function renderReadingImage(cards: ExportCard[], seed: string, crea
   const images = await Promise.all(cards.map((c) => loadCardImage(c.card)));
 
   cards.forEach((c, i) => {
-    const x = marginX + i * (cardW + gap);
-    const y = topMargin;
+    const x = stacked ? marginX : marginX + i * (cardW + gap);
+    const y = stacked ? topMargin + i * (cardH + labelHeight + gap) : topMargin;
     const cx = x + cardW / 2;
     const cy = y + cardH / 2;
 

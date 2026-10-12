@@ -1,11 +1,26 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { MAX_DECISION_CHARS } from "../engine/readingCode";
+import { loadDecisionDraft, saveDecisionDraft, clearDecisionDraft } from "../engine/persistence";
 import styles from "./DecisionForm.module.css";
 
 export function DecisionForm({ onSubmit, submitting }: { onSubmit: (a: string, b: string) => void; submitting: boolean }) {
   const [a, setA] = useState("");
   const [b, setB] = useState("");
   const [touched, setTouched] = useState(false);
+
+  // Restore a recently-typed, not-yet-submitted draft (e.g. the browser was
+  // closed and reopened a few minutes later).
+  useEffect(() => {
+    const draft = loadDecisionDraft();
+    if (draft) {
+      setA(draft.a);
+      setB(draft.b);
+    }
+  }, []);
+
+  useEffect(() => {
+    saveDecisionDraft(a, b);
+  }, [a, b]);
 
   const trimmedA = a.trim();
   const trimmedB = b.trim();
@@ -16,6 +31,7 @@ export function DecisionForm({ onSubmit, submitting }: { onSubmit: (a: string, b
     e.preventDefault();
     setTouched(true);
     if (!valid || submitting) return;
+    clearDecisionDraft();
     onSubmit(trimmedA, trimmedB);
   }
 

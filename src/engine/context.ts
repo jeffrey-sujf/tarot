@@ -6,18 +6,22 @@
 
 const ANON_ID_KEY = "tarot.anonId";
 
-/** A random, locally generated id — never sent anywhere, never fingerprinted. */
+/**
+ * A random, locally generated id — never sent anywhere, never fingerprinted.
+ * Kept in sessionStorage only, so it (and the browser) retain no memory of
+ * the visitor once the tab/browser is closed.
+ */
 export function getAnonId(): string {
   try {
-    let id = localStorage.getItem(ANON_ID_KEY);
+    let id = sessionStorage.getItem(ANON_ID_KEY);
     if (!id) {
       id = crypto.randomUUID();
-      localStorage.setItem(ANON_ID_KEY, id);
+      sessionStorage.setItem(ANON_ID_KEY, id);
     }
     return id;
   } catch {
-    // localStorage unavailable (private mode, etc.) — fall back to a
-    // session-only random value so the app still works.
+    // sessionStorage unavailable (private mode, etc.) — fall back to a
+    // one-off random value so the app still works.
     return crypto.randomUUID();
   }
 }

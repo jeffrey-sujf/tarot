@@ -92,6 +92,21 @@
   max-width: 220px;
 }
 
+@media (max-width: 560px) {
+  .column {
+    width: 100%;
+    max-width: 360px;
+  }
+
+  .cardButton {
+    max-width: 360px;
+  }
+
+  .label {
+    max-width: 360px;
+  }
+}
+
 @keyframes deal {
   from {
     opacity: 0;
