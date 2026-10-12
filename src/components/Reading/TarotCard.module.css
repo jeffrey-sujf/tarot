@@ -94,16 +94,22 @@
 
 @media (max-width: 560px) {
   .column {
-    width: 100%;
-    max-width: 360px;
+    width: auto;
+    max-width: none;
+    flex: 1 1 0;
+    min-width: 0;
+    gap: 10px;
   }
 
   .cardButton {
-    max-width: 360px;
+    max-width: none;
+    width: 100%;
   }
 
   .label {
-    max-width: 360px;
+    max-width: none;
+    font-size: 10.5px;
+    letter-spacing: 0.02em;
   }
 }
 

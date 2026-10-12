@@ -24,27 +24,19 @@ function isDarkMode(): boolean {
   return typeof window !== "undefined" && window.matchMedia?.("(prefers-color-scheme: dark)").matches === true;
 }
 
-/** Mirrors the on-screen layout: cards stack in a single column on narrow viewports. */
-function isMobileViewport(): boolean {
-  return typeof window !== "undefined" && window.innerWidth <= 560;
-}
-
 export async function renderReadingImage(cards: ExportCard[], seed: string, createdAt: string): Promise<Blob> {
   const { paper: PAPER, ink: INK, faint: FAINT, line: LINE } = isDarkMode() ? PALETTE.dark : PALETTE.light;
-  const stacked = isMobileViewport();
 
-  const cardW = stacked ? 280 : 300;
-  const cardH = stacked ? 420 : 450;
-  const gap = stacked ? 56 : 48;
-  const marginX = stacked ? 48 : 80;
+  const cardW = 300;
+  const cardH = 450;
+  const gap = 48;
+  const marginX = 80;
   const topMargin = 110;
   const labelHeight = 70;
   const bottomMargin = 90;
 
-  const width = stacked ? cardW + marginX * 2 : cards.length * cardW + (cards.length - 1) * gap + marginX * 2;
-  const height = stacked
-    ? topMargin + cards.length * (cardH + labelHeight) + (cards.length - 1) * gap + bottomMargin
-    : topMargin + cardH + labelHeight + bottomMargin;
+  const width = cards.length * cardW + (cards.length - 1) * gap + marginX * 2;
+  const height = topMargin + cardH + labelHeight + bottomMargin;
 
   const canvas = document.createElement("canvas");
   const scale = 2;
@@ -71,8 +63,8 @@ export async function renderReadingImage(cards: ExportCard[], seed: string, crea
   const images = await Promise.all(cards.map((c) => loadCardImage(c.card)));
 
   cards.forEach((c, i) => {
-    const x = stacked ? marginX : marginX + i * (cardW + gap);
-    const y = stacked ? topMargin + i * (cardH + labelHeight + gap) : topMargin;
+    const x = marginX + i * (cardW + gap);
+    const y = topMargin;
     const cx = x + cardW / 2;
     const cy = y + cardH / 2;
 
