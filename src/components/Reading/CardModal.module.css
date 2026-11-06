@@ -11,6 +11,10 @@
   animation: fadeIn 260ms var(--ease-standard);
 }
 
+.overlay.closing {
+  animation: fadeOut 220ms var(--ease-standard) forwards;
+}
+
 .dialog {
   background: var(--paper-raised);
   border-radius: var(--radius-lg);
@@ -26,6 +30,10 @@
   position: relative;
   animation: riseIn 320ms var(--ease-out);
   outline: none;
+}
+
+.dialog.closing {
+  animation: riseIn 220ms var(--ease-standard) reverse forwards;
 }
 
 .close {
@@ -86,6 +94,8 @@
 
 .name {
   font-size: 26px;
+  line-height: 1.15;
+  letter-spacing: -0.015em;
 }
 
 .orientation {
@@ -124,6 +134,11 @@
   to { opacity: 1; }
 }
 
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
 @keyframes riseIn {
   from { opacity: 0; transform: translateY(16px) scale(0.98); }
   to { opacity: 1; transform: translateY(0) scale(1); }
@@ -143,5 +158,21 @@
 @media (prefers-reduced-motion: reduce) {
   .overlay, .dialog {
     animation: none;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .overlay {
+    background: rgba(20, 19, 16, 0.86);
+    backdrop-filter: none;
+  }
+}
+
+@media (prefers-contrast: more) {
+  .dialog {
+    border-color: var(--line-strong);
+  }
+  .close {
+    border-color: var(--line-strong);
   }
 }

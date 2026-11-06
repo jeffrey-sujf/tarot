@@ -1,8 +1,12 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { Orientation, TarotCard as TarotCardData } from "../../data/cards";
 import { CardArt } from "../CardArt";
 import { cx } from "../../utils/classNames";
+import { useReducedMotion } from "../../utils/useReducedMotion";
 import styles from "./CardModal.module.css";
+
+/** Mirrors the dialog's riseIn duration so close retraces the path it opened on. */
+const EXIT_MS = 220;
 
 interface Props {
   card: TarotCardData;
@@ -13,22 +17,33 @@ interface Props {
 
 export function CardModal({ card, orientation, positionLabel, onClose }: Props) {
   const dialogRef = useRef<HTMLDivElement>(null);
+  const [closing, setClosing] = useState(false);
+  const reducedMotion = useReducedMotion();
   const meaning = orientation === "upright" ? card.meaning.upright : card.meaning.reversed;
   const implication = orientation === "upright" ? card.implication.upright : card.implication.reversed;
 
+  function requestClose() {
+    if (reducedMotion) {
+      onClose();
+      return;
+    }
+    setClosing(true);
+    window.setTimeout(onClose, EXIT_MS);
+  }
+
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
+      if (e.key === "Escape") requestClose();
     };
     document.addEventListener("keydown", onKey);
     dialogRef.current?.focus();
     return () => document.removeEventListener("keydown", onKey);
-  }, [onClose]);
+  }, []);
 
   return (
-    <div className={styles.overlay} onClick={onClose}>
+    <div className={cx(styles.overlay, closing && styles.closing)} onClick={requestClose}>
       <div
-        className={styles.dialog}
+        className={cx(styles.dialog, closing && styles.closing)}
         role="dialog"
         aria-modal="true"
         aria-label={`${card.name}, ${positionLabel}`}
@@ -36,7 +51,7 @@ export function CardModal({ card, orientation, positionLabel, onClose }: Props) 
         ref={dialogRef}
         onClick={(e) => e.stopPropagation()}
       >
-        <button type="button" className={styles.close} onClick={onClose} aria-label="Close">
+        <button type="button" className={styles.close} onClick={requestClose} aria-label="Close">
           ×
         </button>
 

@@ -7,8 +7,8 @@ import { generatePastNowFutureReading, generateDecisionReading } from "../../sta
 import type { Reading } from "../../engine/reading";
 import styles from "./Home.module.css";
 
-/** Industry-standard floor for a "calculating" moment — long enough to read, short enough not to feel slow. */
-const MIN_DRAW_MS = 700;
+/** Floor for the "calculating" moment — long enough to read all three steps in DrawOverlay. */
+const MIN_DRAW_MS = 1400;
 
 function wait(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
