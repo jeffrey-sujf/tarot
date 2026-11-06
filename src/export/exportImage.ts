@@ -24,19 +24,35 @@ function isDarkMode(): boolean {
   return typeof window !== "undefined" && window.matchMedia?.("(prefers-color-scheme: dark)").matches === true;
 }
 
+function isMobileViewport(): boolean {
+  return typeof window !== "undefined" && window.innerWidth <= 560;
+}
+
+/** Standard phone-screen portrait ratio (width / height), e.g. a 1080×1920 shot. */
+const MOBILE_ASPECT = 9 / 16;
+
 export async function renderReadingImage(cards: ExportCard[], seed: string, createdAt: string): Promise<Blob> {
   const { paper: PAPER, ink: INK, faint: FAINT, line: LINE } = isDarkMode() ? PALETTE.dark : PALETTE.light;
+  const mobile = isMobileViewport();
 
-  const cardW = 300;
-  const cardH = 450;
-  const gap = 48;
-  const marginX = 80;
-  const topMargin = 110;
-  const labelHeight = 70;
-  const bottomMargin = 90;
+  const cardW = mobile ? 112 : 300;
+  const cardH = mobile ? 168 : 450;
+  const gap = mobile ? 16 : 48;
+  const marginX = mobile ? 22 : 80;
+  const topMargin = mobile ? 90 : 110;
+  const labelHeight = mobile ? 54 : 70;
+  const bottomMargin = mobile ? 70 : 90;
 
   const width = cards.length * cardW + (cards.length - 1) * gap + marginX * 2;
-  const height = topMargin + cardH + labelHeight + bottomMargin;
+  const naturalHeight = topMargin + cardH + labelHeight + bottomMargin;
+
+  // On mobile, pad the canvas (not the card art) out to a phone-screen
+  // portrait ratio so the export reads as a proper mobile image rather than
+  // a wide strip, with the reading centered in generous whitespace.
+  const targetHeight = mobile ? Math.max(naturalHeight, width / MOBILE_ASPECT) : naturalHeight;
+  const extra = targetHeight - naturalHeight;
+  const offsetY = mobile ? extra * 0.4 : 0;
+  const height = targetHeight;
 
   const canvas = document.createElement("canvas");
   const scale = 2;
@@ -53,18 +69,18 @@ export async function renderReadingImage(cards: ExportCard[], seed: string, crea
   ctx.fillStyle = INK;
   ctx.font = "500 22px Georgia, 'Times New Roman', serif";
   ctx.textAlign = "center";
-  ctx.fillText("A Tarot Reading", width / 2, 52);
+  ctx.fillText("A Tarot Reading", width / 2, offsetY + 52);
 
   ctx.fillStyle = FAINT;
   ctx.font = "13px Georgia, serif";
   const dateLabel = new Date(createdAt).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" });
-  ctx.fillText(dateLabel, width / 2, 76);
+  ctx.fillText(dateLabel, width / 2, offsetY + 76);
 
   const images = await Promise.all(cards.map((c) => loadCardImage(c.card)));
 
   cards.forEach((c, i) => {
     const x = marginX + i * (cardW + gap);
-    const y = topMargin;
+    const y = offsetY + topMargin;
     const cx = x + cardW / 2;
     const cy = y + cardH / 2;
 
@@ -87,9 +103,9 @@ export async function renderReadingImage(cards: ExportCard[], seed: string, crea
     ctx.strokeRect(x, y, cardW, cardH);
 
     ctx.fillStyle = FAINT;
-    ctx.font = "600 12px -apple-system, Segoe UI, sans-serif";
+    ctx.font = `600 ${mobile ? 10 : 12}px -apple-system, Segoe UI, sans-serif`;
     ctx.textAlign = "center";
-    wrapText(ctx, c.label.toUpperCase(), cx, y + cardH + 30, cardW + 20, 16);
+    wrapText(ctx, c.label.toUpperCase(), cx, y + cardH + (mobile ? 22 : 30), cardW + 16, mobile ? 13 : 16);
   });
 
   ctx.fillStyle = FAINT;

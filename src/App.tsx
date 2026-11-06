@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Home } from "./components/Home/Home";
 import { ReadingView } from "./components/Reading/ReadingView";
+import { DrawOverlay } from "./components/DrawOverlay";
 import { reconstructReading } from "./state/readingStore";
 import { loadCurrentReading, saveCurrentReading } from "./engine/persistence";
 import type { Reading } from "./engine/reading";
@@ -18,6 +19,7 @@ function setSeedInUrl(seed: string | null) {
 
 export default function App() {
   const [reading, setReading] = useState<Reading | null>(null);
+  const [drawing, setDrawing] = useState(false);
 
   useEffect(() => {
     const seed = readSeedFromUrl();
@@ -49,5 +51,14 @@ export default function App() {
     saveCurrentReading(null);
   }
 
-  return reading ? <ReadingView reading={reading} onStartOver={handleStartOver} /> : <Home onReady={handleReady} />;
+  return (
+    <>
+      {reading ? (
+        <ReadingView reading={reading} onStartOver={handleStartOver} />
+      ) : (
+        <Home onReady={handleReady} onDrawingChange={setDrawing} />
+      )}
+      <DrawOverlay active={drawing} />
+    </>
+  );
 }

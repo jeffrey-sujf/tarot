@@ -7,7 +7,20 @@ import { generatePastNowFutureReading, generateDecisionReading } from "../../sta
 import type { Reading } from "../../engine/reading";
 import styles from "./Home.module.css";
 
-export function Home({ onReady }: { onReady: (reading: Reading) => void }) {
+/** Industry-standard floor for a "calculating" moment — long enough to read, short enough not to feel slow. */
+const MIN_DRAW_MS = 700;
+
+function wait(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+export function Home({
+  onReady,
+  onDrawingChange,
+}: {
+  onReady: (reading: Reading) => void;
+  onDrawingChange: (drawing: boolean) => void;
+}) {
   const [selected, setSelected] = useState<string | null>(null);
   const [generating, setGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -15,13 +28,15 @@ export function Home({ onReady }: { onReady: (reading: Reading) => void }) {
   async function startPastNowFuture() {
     setGenerating(true);
     setError(null);
+    onDrawingChange(true);
     try {
-      const reading = await generatePastNowFutureReading();
+      const [reading] = await Promise.all([generatePastNowFutureReading(), wait(MIN_DRAW_MS)]);
       onReady(reading);
     } catch {
       setError("Something went wrong drawing your cards. Please try again.");
     } finally {
       setGenerating(false);
+      onDrawingChange(false);
     }
   }
 
@@ -32,13 +47,15 @@ export function Home({ onReady }: { onReady: (reading: Reading) => void }) {
   async function submitDecision(a: string, b: string) {
     setGenerating(true);
     setError(null);
+    onDrawingChange(true);
     try {
-      const reading = await generateDecisionReading(a, b);
+      const [reading] = await Promise.all([generateDecisionReading(a, b), wait(MIN_DRAW_MS)]);
       onReady(reading);
     } catch {
       setError("Something went wrong drawing your cards. Please try again.");
     } finally {
       setGenerating(false);
+      onDrawingChange(false);
     }
   }
 
